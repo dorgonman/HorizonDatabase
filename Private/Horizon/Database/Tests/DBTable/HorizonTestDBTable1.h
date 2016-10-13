@@ -57,10 +57,7 @@ public:
 
 public://TODO: auto generate
 
-	static FString GetCreateTableStmt()
-	{
-		return "CREATE TABLE IF NOT EXISTS HorizonTestDBTable1(Id int32 primary key, bTest1 bool, TestString FString, TestFloat float)";
-	};
+	
 
 
 	friend  bool operator==(const FHorizonTestDBTable1& lhs, const FHorizonTestDBTable1& rhs);
@@ -99,10 +96,10 @@ inline bool operator>=(const FHorizonTestDBTable1& lhs, const FHorizonTestDBTabl
 
 
 
-//TODO: Implement Tool(SociUE4CppGenerator) that can auto generate following code
+//TODO: Implement Tool(HorizonDatabaseUE4GeneratedCode) that can auto generate following code
 
 
-
+//=====================================Start HorizonDatabaseUE4GeneratedCode==========================
 
 namespace soci
 {
@@ -146,30 +143,114 @@ class HORIZONDATABASE_API UHorizonTestDBTable1FunctionLibrary : public UBlueprin
 {
 private:
 	GENERATED_BODY()
-public:
+public://blueprint
+
 	UFUNCTION(BlueprintCallable, Category = "HorizonTestDBTable1FunctionLibrary")
-	static void BulkInsert(FHorizonTestDBTable1BulkData& bulkData, const FHorizonTestDBTable1& data) {
+	static void CreateTable(AHorizonDatabase* pDB)
+	{
+		if (pDB) {
+			//pDB->CreateTable(FHorizonTestDBTable1::StaticStruct());
+			pDB->ExecuteSQL(GetCreateTableSqlStmt(pDB));
+		}
+	};
+
+
+
+	UFUNCTION(BlueprintCallable, Category = "HorizonTestDBTable1FunctionLibrary")
+	static void DeleteData(AHorizonDatabase* pDB, const FString& condition = "")
+	{
+		if (pDB) {
+			pDB->DeleteData(FHorizonTestDBTable1::StaticStruct()->GetName(), condition);
+		}
+	};
+
+
+	UFUNCTION(BlueprintCallable, Category = "HorizonTestDBTable1FunctionLibrary")
+	static void TruncateTable(AHorizonDatabase* pDB)
+	{
+		if (pDB) {
+			pDB->TruncateTable(FHorizonTestDBTable1::StaticStruct()->GetName());
+		}
+	};
+
+
+
+
+	UFUNCTION(BlueprintCallable, Category = "HorizonTestDBTable1FunctionLibrary")
+	static void DropTable(AHorizonDatabase* pDB)
+	{
+		if (pDB) {
+			pDB->DropTable(FHorizonTestDBTable1::StaticStruct()->GetName());
+		}
+	};
+
+	UFUNCTION(BlueprintCallable, Category = "HorizonTestDBTable1FunctionLibrary")
+	static bool IsTableExists(AHorizonDatabase* pDB)
+	{
+		bool bResult = false;
+		if (pDB) {
+			bResult = pDB->IsTableExists(FHorizonTestDBTable1::StaticStruct()->GetName());
+		}
+
+		return bResult;
+	};
+
+	UFUNCTION(BlueprintCallable, Category = "HorizonTestDBTable1FunctionLibrary")
+	static void UpdateData(AHorizonDatabase* pDB, const FString& updateParam, const FString&  condition = "")
+	{
+		if (pDB) {
+			pDB->UpdateData(FHorizonTestDBTable1::StaticStruct()->GetName(), updateParam, condition);
+		}
+	};
+
+
+
+	UFUNCTION(BlueprintCallable, Category = "HorizonTestDBTable1FunctionLibrary")
+	static int GetTableRowCount(AHorizonDatabase* pDB, const FString& condition)
+	{
+		int result = 0;
+		if (pDB) {
+			result = pDB->GetTableRowCount(FHorizonTestDBTable1::StaticStruct()->GetName(), condition);
+		}
+		return result;
+	};
+
+
+
+
+
+
+
+
+
+	UFUNCTION(BlueprintCallable, Category = "HorizonTestDBTable1FunctionLibrary")
+	static void AddBulkData(FHorizonTestDBTable1BulkData& bulkData, const FHorizonTestDBTable1& data) 
+	{
 		bulkData.IdList.push_back(data.Id);
 		bulkData.bTest1List.push_back(data.bTest1 ? 1 : 0);
 		bulkData.TestStringList.push_back(TCHAR_TO_UTF8(*data.TestString));
 		bulkData.TestFloatList.push_back(data.TestFloat);
 	};
-	UFUNCTION(BlueprintCallable, Category = "HorizonTestDBTable1FunctionLibrary")
-	static void BulkExec(AHorizonDatabase* pDB, const FString& sqlString, const FHorizonTestDBTable1BulkData& bulkData)
-	{
-		soci::transaction tr(pDB->GetSession());
-		try {
-			pDB->GetSession() << TCHAR_TO_UTF8(*sqlString), soci::use(bulkData.IdList), soci::use(bulkData.bTest1List)
-				, soci::use(bulkData.TestStringList), soci::use(bulkData.TestFloatList);
-		}
-		catch (const std::exception& e) {
-			throw e;
-		}
+	
+	
 
-		tr.commit();
+	UFUNCTION(BlueprintCallable, Category = "HorizonTestDBTable1FunctionLibrary")
+	static void InsertBulkData(AHorizonDatabase* pDB, FHorizonTestDBTable1BulkData& bulkData, bool bReplace = true) 
+	{
+		if (pDB) {
+			UHorizonTestDBTable1FunctionLibrary::BulkExec(pDB, pDB->GetInsertBindingSqlStmt(FHorizonTestDBTable1::StaticStruct(), bReplace), bulkData);
+		}
 	};
 
 
+	
+	UFUNCTION(BlueprintCallable, Category = "HorizonTestDBTable1FunctionLibrary")
+	static void UpdateBulkData(AHorizonDatabase* pDB, FHorizonTestDBTable1BulkData& bulkData)
+	{
+		if (pDB) {
+			UHorizonTestDBTable1FunctionLibrary::BulkExec(pDB, pDB->GetUpdateBindingSqlStmt(FHorizonTestDBTable1::StaticStruct()), bulkData);
+		}
+	};
 	UFUNCTION(BlueprintCallable, Category = "HorizonTestDBTable1FunctionLibrary")
 	static FHorizonTestDBTable1 QueryData(AHorizonDatabase* pDB, const FString& condition = "")
 	{
@@ -204,6 +285,34 @@ public:
 		return result;
 	};
 
+public://C++
+
+	static FString GetCreateTableSqlStmt(AHorizonDatabase* pDB)
+	{
+		//pDB->GetCreateTableSqlStmt(pDB, FHorizonTestDBTable1::StaticStruct());
+		return "CREATE TABLE IF NOT EXISTS HorizonTestDBTable1(Id int32 primary key, bTest1 bool, TestString FString, TestFloat float)";
+	};
+
+
+
+	static void BulkExec(AHorizonDatabase* pDB, const FString& sqlString, const FHorizonTestDBTable1BulkData& bulkData)
+	{
+		soci::transaction tr(pDB->GetSession());
+		try {
+			pDB->GetSession() << TCHAR_TO_UTF8(*sqlString), soci::use(bulkData.IdList), soci::use(bulkData.bTest1List)
+				, soci::use(bulkData.TestStringList), soci::use(bulkData.TestFloatList);
+		}
+		catch (const std::exception& e) {
+			throw e;
+		}
+
+		tr.commit();
+	};
+
 
 };
 
+
+
+
+//=====================================End HorizonDatabaseUE4GeneratedCode==========================

@@ -142,15 +142,14 @@ static void SimpleTestImplement(FAutomationTestBase* pTestCase, AHorizonDatabase
 
 static void ORMTestImplement(FAutomationTestBase* pTestCase, AHorizonDatabase* pDB) 
 {
-	pTestCase->AddLogItem("ORMTestImplement2 start");
+	pTestCase->AddLogItem("ORMTestImplement start");
 	auto pStruct = FHorizonTestDBTable1::StaticStruct();
 
 
 	//============================create database==============================
 	pDB->DropTable(FHorizonTestDBTable1::StaticStruct()->GetName());
-	auto createTableStmt = FHorizonTestDBTable1::GetCreateTableStmt();
-	pDB->ExecuteSQL(createTableStmt);
-	pTestCase->AddLogItem("ORMTestImplement2 CreateTable");
+	UHorizonTestDBTable1FunctionLibrary::CreateTable(pDB);
+	pTestCase->AddLogItem("ORMTestImplement CreateTable");
 	//============================test data===================================
 	FHorizonTestDBTable1BulkData bulkData;
 	FHorizonTestDBTable1 a0;
@@ -163,15 +162,15 @@ static void ORMTestImplement(FAutomationTestBase* pTestCase, AHorizonDatabase* p
 	a1.TestString = "test a1";
 	a1.TestFloat = 2.3333f;
 	a1.bTest1 = false;
-	UHorizonTestDBTable1FunctionLibrary::BulkInsert(bulkData, a0);
-	UHorizonTestDBTable1FunctionLibrary::BulkInsert(bulkData, a1);
-	auto insertSQL = AHorizonDatabase::GetInsertSQLUseStmt(pStruct, false);
+	UHorizonTestDBTable1FunctionLibrary::AddBulkData(bulkData, a0);
+	UHorizonTestDBTable1FunctionLibrary::AddBulkData(bulkData, a1);
+	//auto insertSQL = AHorizonDatabase::GetInsertSQLUseStmt(pStruct, false);
 
 	pTestCase->AddLogItem("ORMTestImplement2 start insert row");
 	//============================insert row==================================
 
 	try {
-		UHorizonTestDBTable1FunctionLibrary::BulkExec(pDB, insertSQL, bulkData);
+		UHorizonTestDBTable1FunctionLibrary::InsertBulkData(pDB, bulkData);
 	}
 	catch (std::exception& e) {
 		pTestCase->AddError(FString::Printf(TEXT("insertSQL exception: %s"), *FString(e.what())));
@@ -229,7 +228,7 @@ static void ORMTestImplement(FAutomationTestBase* pTestCase, AHorizonDatabase* p
 	//=============================UpdateData===============================================
 
 	{
-		pDB->UpdateData(FHorizonTestDBTable1::StaticStruct()->GetName(), "TestString='abc', TestFloat=4.3333", "WHERE Id = 0");
+		UHorizonTestDBTable1FunctionLibrary::UpdateData(pDB, "TestString='abc', TestFloat=4.3333", "WHERE Id = 0");
 		auto data0 = UHorizonTestDBTable1FunctionLibrary::QueryData(pDB, "WHERE Id = 0");
 		pTestCase->TestNotEqual(TEXT("data0 != a0"), data0, a0);
 	}
@@ -238,12 +237,12 @@ static void ORMTestImplement(FAutomationTestBase* pTestCase, AHorizonDatabase* p
 	//=================================DeleteData======================================
 
 	{
-		pDB->DeleteData(FHorizonTestDBTable1::StaticStruct()->GetName(), "WHERE Id = 0");
+		UHorizonTestDBTable1FunctionLibrary::DeleteData(pDB, "WHERE Id = 0");
 		auto rowSet = UHorizonTestDBTable1FunctionLibrary::QueryMultiData(pDB);
 		pTestCase->TestEqual(TEXT("rowSet.Num() == 1"), rowSet.Num(), 1);
 	}
 	{
-		pDB->DeleteData(FHorizonTestDBTable1::StaticStruct()->GetName(), "WHERE Id = 1");
+		UHorizonTestDBTable1FunctionLibrary::DeleteData(pDB, "WHERE Id = 1");
 		auto rowSet = UHorizonTestDBTable1FunctionLibrary::QueryMultiData(pDB);
 		pTestCase->TestEqual(TEXT("rowSet.Num() == 0"), rowSet.Num(), 0);
 	}
@@ -253,7 +252,7 @@ static void ORMTestImplement(FAutomationTestBase* pTestCase, AHorizonDatabase* p
 		try
 		{
 			{ //insert test data
-				UHorizonTestDBTable1FunctionLibrary::BulkExec(pDB, insertSQL, bulkData);
+				UHorizonTestDBTable1FunctionLibrary::InsertBulkData(pDB, bulkData);
 				auto rowSet = UHorizonTestDBTable1FunctionLibrary::QueryMultiData(pDB);
 				pTestCase->TestEqual(TEXT("rowSet.Num() == 2"), rowSet.Num(), 2);
 			}
@@ -269,7 +268,7 @@ static void ORMTestImplement(FAutomationTestBase* pTestCase, AHorizonDatabase* p
 	//=================================TruncateTable======================================
 	{
 		{ //insert test data
-			UHorizonTestDBTable1FunctionLibrary::BulkExec(pDB, insertSQL, bulkData);
+			UHorizonTestDBTable1FunctionLibrary::InsertBulkData(pDB, bulkData);
 			auto rowSet = UHorizonTestDBTable1FunctionLibrary::QueryMultiData(pDB);
 			pTestCase->TestEqual(TEXT("rowSet.Num() == 2"), rowSet.Num(), 2);
 		}

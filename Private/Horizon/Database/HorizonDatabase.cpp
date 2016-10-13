@@ -153,7 +153,7 @@ void AHorizonDatabase::Close()
 
 void AHorizonDatabase::CreateTable(UStruct* pSchema)
 {
-	auto sqlStmt = GetCreateTableSQLStmt(this, pSchema);
+	auto sqlStmt = GetCreateTableSqlStmt(this, pSchema);
 
 	try
 	{
@@ -299,7 +299,7 @@ void AHorizonDatabase::ExecuteSQL(const FString& sqlStmt)
 
 
 
-FString AHorizonDatabase::GetCreateTableSQLStmt(AHorizonDatabase* pDB, UStruct* pSchema)
+FString AHorizonDatabase::GetCreateTableSqlStmt(AHorizonDatabase* pDB, UStruct* pSchema)
 {
 	ensureMsgf(pDB->BackEndType != EHorizonDatabaseBackEnd::Empty, TEXT("Warning: Current database BackEndType is Empty"));
 	auto tableName = pSchema->GetName();
@@ -333,7 +333,7 @@ FString AHorizonDatabase::GetCreateTableSQLStmt(AHorizonDatabase* pDB, UStruct* 
 
 
 
-FString AHorizonDatabase::GetInsertSQLUseStmt(UStruct* pSchema, bool bReplace)
+FString AHorizonDatabase::GetInsertBindingSqlStmt(UStruct* pSchema, bool bReplace)
 {
 	auto tableName = pSchema->GetName();
 	FString insertSqlStmt;
@@ -374,7 +374,7 @@ FString AHorizonDatabase::GetInsertSQLUseStmt(UStruct* pSchema, bool bReplace)
 
 
 
-FString AHorizonDatabase::GetUpdateSQLUseStmt(UStruct* pSchema) {
+FString AHorizonDatabase::GetUpdateBindingSqlStmt(UStruct* pSchema) {
 
 	auto tableName = pSchema->GetName();
 	FString sqlStmt;

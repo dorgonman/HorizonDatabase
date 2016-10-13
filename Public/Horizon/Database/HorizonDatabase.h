@@ -95,11 +95,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HorizonPlugin|HorizonDatabase")
 		bool bAutoOpen = true;
 
-public://For Blueprint
-
-	UFUNCTION(BlueprintCallable, Category = "HorizonPlugin|HorizonDatabase")
-	void CreateTable(UStruct* pSchema);
-
+public://For blueprint
 
 	//DELETE FROM tableName condition
 	UFUNCTION(BlueprintCallable, Category = "HorizonPlugin|HorizonDatabase")
@@ -129,16 +125,18 @@ public://For Blueprint
 	UFUNCTION(BlueprintCallable, Category = "HorizonPlugin|HorizonDatabase")
 	int GetTableRowCount(const FString& tableName, const FString& condition);
 
+public: //C++
+	void CreateTable(UStruct* pSchema);
+	static FString GetCreateTableSqlStmt(AHorizonDatabase* pDB, UStruct* pSchema);
 
+	///////////////////////////////////////////////////////////////////////
+	/// \brief GetInsertBindingSqlStmt
+	/// \param bReplace if true use "INSERT OR REPLACE INTO" else use "INSERT INTO"
+	/// \return FString Sql stmt that can used in soci sql binding
+	/////////////////////////////////////////////////////////////////////////
+	static FString GetInsertBindingSqlStmt(UStruct* pSchema, bool bReplace = true);
 
-	UFUNCTION(BlueprintCallable, Category = "HorizonPlugin|HorizonDatabase")
-	static FString GetCreateTableSQLStmt(AHorizonDatabase* pDB, UStruct* pSchema);
-
-	UFUNCTION(BlueprintCallable, Category = "HorizonPlugin|HorizonDatabase")
-	static FString GetInsertSQLUseStmt(UStruct* pSchema, bool bReplace = true);
-
-	UFUNCTION(BlueprintCallable, Category = "HorizonPlugin|HorizonDatabase")
-	static FString GetUpdateSQLUseStmt(UStruct* pSchema);
+	static FString GetUpdateBindingSqlStmt(UStruct* pSchema);
 public: //For C++
 
 	template <typename S>
