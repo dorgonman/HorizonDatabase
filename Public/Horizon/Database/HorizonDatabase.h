@@ -74,14 +74,8 @@ public:
 	AHorizonDatabase();
 public:
 	virtual void BeginPlay() override;
-
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-public:
-	virtual bool Open();
-	virtual void Close();
 
-
-	bool IsMemoryDB();
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HorizonPlugin|HorizonDatabase")
 		TEnumAsByte<EHorizonDatabaseBackEnd::Type> BackEndType;
@@ -96,6 +90,13 @@ public:
 		bool bAutoOpen = true;
 
 public://For blueprint
+	UFUNCTION(BlueprintCallable, Category = "HorizonPlugin|HorizonDatabase")
+		virtual bool Open();
+	UFUNCTION(BlueprintCallable, Category = "HorizonPlugin|HorizonDatabase")
+		virtual void Close();
+	UFUNCTION(BlueprintCallable, Category = "HorizonPlugin|HorizonDatabase")
+		bool IsMemoryDB();
+
 
 	//DELETE FROM tableName condition
 	UFUNCTION(BlueprintCallable, Category = "HorizonPlugin|HorizonDatabase")

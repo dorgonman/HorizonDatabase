@@ -224,7 +224,7 @@ public://blueprint
 
 
 	UFUNCTION(BlueprintCallable, Category = "HorizonTestDBTable1FunctionLibrary")
-	static void AddBulkData(FHorizonTestDBTable1BulkData& bulkData, const FHorizonTestDBTable1& data) 
+	static void AddBulkData(UPARAM(ref) FHorizonTestDBTable1BulkData& bulkData, const FHorizonTestDBTable1& data) 
 	{
 		bulkData.IdList.push_back(data.Id);
 		bulkData.bTest1List.push_back(data.bTest1 ? 1 : 0);
@@ -235,7 +235,7 @@ public://blueprint
 	
 
 	UFUNCTION(BlueprintCallable, Category = "HorizonTestDBTable1FunctionLibrary")
-	static void InsertBulkData(AHorizonDatabase* pDB, FHorizonTestDBTable1BulkData& bulkData, bool bReplace = true) 
+	static void InsertBulkData(AHorizonDatabase* pDB, const FHorizonTestDBTable1BulkData& bulkData, bool bReplace = true) 
 	{
 		if (pDB) {
 			UHorizonTestDBTable1FunctionLibrary::BulkExec(pDB, pDB->GetInsertBindingSqlStmt(FHorizonTestDBTable1::StaticStruct(), bReplace), bulkData);
@@ -245,7 +245,7 @@ public://blueprint
 
 	
 	UFUNCTION(BlueprintCallable, Category = "HorizonTestDBTable1FunctionLibrary")
-	static void UpdateBulkData(AHorizonDatabase* pDB, FHorizonTestDBTable1BulkData& bulkData)
+	static void UpdateBulkData(AHorizonDatabase* pDB, const FHorizonTestDBTable1BulkData& bulkData)
 	{
 		if (pDB) {
 			UHorizonTestDBTable1FunctionLibrary::BulkExec(pDB, pDB->GetUpdateBindingSqlStmt(FHorizonTestDBTable1::StaticStruct()), bulkData);

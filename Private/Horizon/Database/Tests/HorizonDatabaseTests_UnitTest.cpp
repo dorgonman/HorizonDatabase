@@ -196,7 +196,7 @@ static void ORMTestImplement(FAutomationTestBase* pTestCase, AHorizonDatabase* p
 
 
 	pTestCase->AddLogItem("end select multi row");
-	//============================select single tuple=======================================
+	//============================select single tuple: C++ only=======================================
 
 	{
 		enum { Id, TestString };
@@ -208,7 +208,7 @@ static void ORMTestImplement(FAutomationTestBase* pTestCase, AHorizonDatabase* p
 	}
 
 	pTestCase->AddLogItem("end select single tuple");
-	//============================select multi tuple=======================================
+	//============================select multi tuple: C++ only=======================================
 
 	{
 		enum { Id, TestString };

@@ -45,7 +45,7 @@ namespace soci
 
 		static void from_base(base_type const & in, indicator ind, FString & out)
 		{
-			out = in.c_str();
+			out = UTF8_TO_TCHAR(in.c_str());
 			
 		}
 

@@ -21,9 +21,9 @@ AHorizonDatabase::AHorizonDatabase()
 void AHorizonDatabase::BeginPlay()
 {
 	Super::BeginPlay();
-	if (bAutoOpen) {
-		Open();
-	}
+	if (bAutoOpen) {Open();}
+
+
 }
 
 void AHorizonDatabase::EndPlay(const EEndPlayReason::Type EndPlayReason) 
@@ -36,50 +36,52 @@ void AHorizonDatabase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 bool AHorizonDatabase::Open()
 {
 	bool bResult = false;
-	Close();
-	try {
-		switch (BackEndType) {
-		case EHorizonDatabaseBackEnd::Empty:
-			SessionPtr = MakeShareable(new soci::session(soci::empty, TCHAR_TO_UTF8(*ConnectString)));
-			break;
-		case EHorizonDatabaseBackEnd::Sqlite3:
-		{
-			FString baseDirectory;
-			FString dbFileFullPath;
-			if (!IsMemoryDB()) {
-				baseDirectory = UHorizonDatabaseFunctionLibrary::GetBaseDirectory();
-				dbFileFullPath = baseDirectory / ConnectString;
-
-				UHorizonDatabaseFunctionLibrary::EnsureFileDirectory(dbFileFullPath);
-
-				if (FPaths::IsRelative(dbFileFullPath)) {
-					dbFileFullPath = FPaths::ConvertRelativePathToFull(MoveTemp(dbFileFullPath));
-				}
-			}
-			else {
-				dbFileFullPath = ConnectString;
-			}
-			SessionPtr = MakeShareable(new soci::session(soci::sqlite3, TCHAR_TO_UTF8(*dbFileFullPath)));
-		}
-		break;
-		default:
-		{
-			//auto dbType = GetHorizonDatabaseBackEndEnumAsString(BackEndType).ToString();
-			ensureMsgf(false, TEXT("backend %d not support"), (int)BackEndType);
-			SessionPtr = MakeShareable(new soci::session(soci::empty, TCHAR_TO_UTF8(*ConnectString)));
-		}
-		break;
-		}
-
-		bResult = true;
-	}
-	catch (const std::exception& e)
+	if (!SessionPtr.IsValid())
 	{
+		try {
+			switch (BackEndType) {
+			case EHorizonDatabaseBackEnd::Empty:
+				SessionPtr = MakeShareable(new soci::session(soci::empty, TCHAR_TO_UTF8(*ConnectString)));
+				break;
+			case EHorizonDatabaseBackEnd::Sqlite3:
+			{
+				FString baseDirectory;
+				FString dbFileFullPath;
+				if (!IsMemoryDB()) {
+					baseDirectory = UHorizonDatabaseFunctionLibrary::GetBaseDirectory();
+					dbFileFullPath = baseDirectory / ConnectString;
 
-		UE_HORIZONDB_ERROR("AHorizonDatabase::Open exception: %s", *FString(e.what()));
-		throw e;
-	}
-	
+					UHorizonDatabaseFunctionLibrary::EnsureFileDirectory(dbFileFullPath);
+
+					if (FPaths::IsRelative(dbFileFullPath)) {
+						dbFileFullPath = FPaths::ConvertRelativePathToFull(MoveTemp(dbFileFullPath));
+					}
+				}
+				else {
+					dbFileFullPath = ConnectString;
+				}
+				SessionPtr = MakeShareable(new soci::session(soci::sqlite3, TCHAR_TO_UTF8(*dbFileFullPath)));
+			}
+			break;
+			default:
+			{
+				//auto dbType = GetHorizonDatabaseBackEndEnumAsString(BackEndType).ToString();
+				ensureMsgf(false, TEXT("backend %d not support"), (int)BackEndType);
+				SessionPtr = MakeShareable(new soci::session(soci::empty, TCHAR_TO_UTF8(*ConnectString)));
+			}
+			break;
+			}
+
+			bResult = true;
+		}
+		catch (const std::exception& e)
+		{
+
+			UE_HORIZONDB_ERROR("AHorizonDatabase::Open exception: %s", *FString(e.what()));
+			throw e;
+		}
+
+	}//if (!SessionPtr.IsValid())
 
 	//case EHorizonDatabaseBackEnd::DB2:
 	//	//TODO: add soci_db2.Build.cs
